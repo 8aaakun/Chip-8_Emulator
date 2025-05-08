@@ -31,11 +31,11 @@ class Chip8{
     bool drawFlag; // drawFlag가 true 면 화면 업데이트
     
     void init();
-    void loadGame(char* filename)
+    bool loadGame(char* filename);
     void setKeys();
+    int getKeyPressed();
     void emulateCycle();
-    
-    
+
     void DecodeOp0(uint16_t opcode);
     void Op0NNN(uint16_t opcode);
     void Op00E0(uint16_t opcode);
@@ -75,12 +75,11 @@ class Chip8{
     void OpFX0A(uint16_t opcode);
     void OpFX15(uint16_t opcode);
     void OpFX18(uint16_t opcode);
+    void OpFX1E(uint16_t opcode);
     void OpFX29(uint16_t opcode);
     void OpFX33(uint16_t opcode);
     void OpFX55(uint16_t opcode);
     void OpFX65(uint16_t opcode);
-    
-    
-}
+};
 
 #endif
