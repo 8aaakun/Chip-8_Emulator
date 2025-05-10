@@ -34,7 +34,10 @@ void Chip8::init(){
     sp = 0;
     delay_timer = 0;
     sound_timer = 0;
+    drawFlag = true;
     
+    memset(gfx, 0, sizeof(gfx));
+    memset(keyState, 0, sizeof(keyState));
     memset(memory, 0, sizeof(memory));
     memset(V, 0, sizeof(V));
     memset(stack, 0, sizeof(stack));
@@ -49,7 +52,7 @@ void Chip8::init(){
 bool Chip8::loadGame(char* filename){
     std::cout << "게임 로드 중..." << "\n";
     char path[100];
-    sprintf(path, "../src/%s", filename);
+    sprintf(path, "roms/%s", filename);
     FILE* in;
     in = fopen(path, "rb");
     if(in == NULL){
@@ -312,6 +315,7 @@ void Chip8::DecodeOpF(uint16_t opcode){
         case 0x0A:OpFX0A(opcode); break;
         case 0x15:OpFX15(opcode); break;
         case 0x18:OpFX18(opcode); break;
+        case 0x1E: OpFX1E(opcode); break;
         case 0x29:OpFX29(opcode); break;
         case 0x33:OpFX33(opcode); break;
         case 0x55:OpFX55(opcode); break;
@@ -325,9 +329,10 @@ void Chip8::OpFX07(uint16_t opcode){ // V[X] = delay timer
 }
 void Chip8::OpFX0A(uint16_t opcode){
     uint16_t X = (opcode & 0x0F00) >> 8;
-    uint8_t key = getKeyPressed();
+    int8_t key = getKeyPressed();
     
     if(key != -1){
+        std::cout << "Key Pressed: " << std::hex << (int)key << "\n";
         V[X] = key;
     }
     else{ // 아니면 pc를 되돌려 다시 실행
@@ -362,12 +367,12 @@ void Chip8::OpFX55(uint16_t opcode){ // V[0] 부터 V[X] 까지 값을 메모리
     for (uint16_t i = 0; i <= X; i++){
         memory[I + i] = V[i];
     }
-    I = I + X + 1; // 이후 오프셋 바꾸기
+    //I = I + X + 1; // 이후 오프셋 바꾸기
 }
 void Chip8::OpFX65(uint16_t opcode){ // 메모리 I의 값을 V[0] 부터 V[X] 까지 순서대로 저장
     uint16_t X = (opcode & 0x0F00) >> 8;
     for (uint16_t i = 0; i <= X; i++){
         V[i] = memory[I + i];
     }
-    I = I + X + 1; // 이후 오프셋 바꾸기
+    //I = I + X + 1; // 이후 오프셋 바꾸기
 }
